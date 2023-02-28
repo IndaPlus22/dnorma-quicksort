@@ -3,8 +3,7 @@ import java.util.Arrays;
 public class QuickSort implements IntSorter{
     public void sort(int[] array){
         if(array.length <= 15){
-            InsertionSort inSort = new InsertionSort();
-            inSort.sort(array);
+            insertionSort(array);
         }
         quickSort(array, 0, array.length - 1);
     }
@@ -14,13 +13,29 @@ public class QuickSort implements IntSorter{
      * @param low
      * @param high
      */
-    public void quickSort(int[]array, int low, int high){
+    public static void quickSort(int[]array, int low, int high){
         if(low < high){
+            if(array.length <= 15){
+                insertionSort(array);
+                return;
+            }
             int pivot = hoarePartition(array, low, high);
             quickSort(array, low, pivot);
             quickSort(array, pivot + 1, high);
         }
         return;
+    }
+    public static void insertionSort(int[] array){
+        int n = array.length;
+        for(int i = 1; i < n; i++){
+            int j = i;
+            while(j > 0 && array[j-1] > array[j]){
+                int temp = array[j-1];
+                array[j-1] = array[j];
+                array[j] = temp;
+                j--;
+            }
+        }
     }
     /**
      * Hoare partition based on pseudocode from wikipedia
@@ -29,8 +44,8 @@ public class QuickSort implements IntSorter{
      * @param high
      * @return
      */
-    public int hoarePartition(int[] array, int low, int high){
-        int pivot = array[low];
+    public static int hoarePartition(int[] array, int low, int high){
+        int pivot = array[(high+low)/2];
 
         //Left index
         int i = low - 1;
@@ -56,17 +71,4 @@ public class QuickSort implements IntSorter{
         }
         
     }
-    public static void main(String[]args){
-        int[] smallArray = new int[]{2, 3, 7, 9, 8, 10, 12, 11};
-        int[] expectedArray = Arrays.copyOf(smallArray, smallArray.length);
-        QuickSort qsort = new QuickSort();
-        InsertionSort inSort = new InsertionSort();
-
-        inSort.sort(smallArray);
-        Arrays.sort(expectedArray);
-
-        System.out.println(Arrays.toString(smallArray));
-        System.out.println(Arrays.toString(expectedArray));
-    }
-    
 }
