@@ -2,9 +2,6 @@ import java.util.Arrays;
 
 public class QuickSort implements IntSorter{
     public void sort(int[] array){
-        if(array.length <= 15){
-            insertionSort(array);
-        }
         quickSort(array, 0, array.length - 1);
     }
     /**
@@ -15,8 +12,8 @@ public class QuickSort implements IntSorter{
      */
     public static void quickSort(int[]array, int low, int high){
         if(low < high){
-            if(array.length <= 15){
-                insertionSort(array);
+            if(high - low + 1 <= 15){
+                insertionSort(array, low, high); //high - low + 1 is the length of the array
                 return;
             }
             int pivot = hoarePartition(array, low, high);
@@ -25,9 +22,13 @@ public class QuickSort implements IntSorter{
         }
         return;
     }
-    public static void insertionSort(int[] array){
-        int n = array.length;
-        for(int i = 1; i < n; i++){
+    /**
+     * Iterative insertion sort
+     * @param array The array to be sorted
+     * @param n Length of the array
+     */
+    private static void insertionSort(int[] array, int low, int high){
+        for(int i = low; i <= high; i++){
             int j = i;
             while(j > 0 && array[j-1] > array[j]){
                 int temp = array[j-1];
@@ -38,15 +39,15 @@ public class QuickSort implements IntSorter{
         }
     }
     /**
-     * Hoare partition based on pseudocode from wikipedia
-     * @param array
-     * @param low
+     * Hoare partition based on pseudocode from wikipedia https://en.wikipedia.org/wiki/Quicksort
+     * @param array Array to be sorted
+     * @param low 
      * @param high
      * @return
      */
-    public static int hoarePartition(int[] array, int low, int high){
+    private static int hoarePartition(int[] array, int low, int high){
         int pivot = array[(high+low)/2];
-
+        
         //Left index
         int i = low - 1;
 
@@ -71,4 +72,25 @@ public class QuickSort implements IntSorter{
         }
         
     }
+    private static int tukeysNintherMedian(int[]array, int low, int high){
+        int len = high - low + 1;
+        int d = len/8; //The array is split in 9 pieces, 8 partitionings is required
+        int median1 = medianIndex3(array, low, low + d, low + 2*d);
+        int median2 = medianIndex3(array, low + len/2 - d, low + len/2, low + len/2 + d);
+        int median3 = medianIndex3(array, high - 2*d, high - d, high);
+        return medianIndex3(array, median1, median2, median3); 
+    }
+    /**
+     * Returns the median of index of three integers. Inspired by https://stackoverflow.com/a/14676309
+     * @param a
+     * @param b
+     * @param c
+     * @return
+     */
+    private static int medianIndex3(int[] v, int a, int b, int c){
+        int max = Math.max(Math.max(v[a],v[b]),v[c]);
+        int min = Math.min(Math.min(v[a],v[b]),v[c]);
+        return v[a]^v[b]^v[c]^v[max]^v[min]; //Integers that share values turn to 0 thanks to XOR
+    }
+    
 }
