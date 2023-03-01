@@ -21,7 +21,7 @@ public class QuickSort implements IntSorter{
     public static void quickSort(int[]array, int low, int high){
         if(low < high){
             int size = high - low + 1;
-            if(size <= 13){
+            if(size <= 10){
                 insertionSort(array, low, high);
             }
             //In case 3-way partitioning needs to be used
@@ -76,10 +76,10 @@ public class QuickSort implements IntSorter{
     private static int hoarePartition(int[] array, int low, int high){
         int pivot = array[low];
         int len = high - low + 1;
-        if(len > 1000){
+        if(len > 500){
             pivot = array[tukeysNintherMedian(array, low, high)];
         }
-        else if(len > 100){
+        else if(len > 70){
             pivot = array[medianIndex3(array, low, high, low + len/2)];
         }
                 
