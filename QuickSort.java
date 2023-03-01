@@ -67,7 +67,6 @@ public class QuickSort implements IntSorter{
      * sorted or sorted. 
      * 
      * Average time complexity: O(n)
-     * Worst time complexity O(n^2)
      * 
      * @param array Array that contains all the values
      * @param low Lowest index in the current array
@@ -99,7 +98,7 @@ public class QuickSort implements IntSorter{
                 j--;
             } while (array[j] > pivot);
 
-            if(i>=j){ 
+            if(i>=j){  //When the indexes meet each other, return
                 return j;
             }
             swap(array, i, j);
@@ -113,9 +112,8 @@ public class QuickSort implements IntSorter{
      * sub-array. On average slightly slower than Hoare's method based on the kattis input data.
      * 
      * Average time complexity: O(n)
-     * Average time complexity: O(n log n)
      * 
-     * @param array Array that contains all the values
+     * @param array Array with int values
      * @param low Lowest index of the subarray
      * @param high Highest index of the subarray
      * @return Array with two pivots for the recursive quicksort algorithm
@@ -133,15 +131,15 @@ public class QuickSort implements IntSorter{
         int lesserVal = low;
         int greaterVal = high;
 
-        for(int i = low; i <= greaterVal;){
+        for(int i = low; i <= greaterVal;){ 
             if(array[i] > pivotValue){
-                swap(array, greaterVal, i);
-                greaterVal--;
+                swap(array, greaterVal, i); //Move to a greater value if more than pivot
+                greaterVal--;               //Move array pointer
             }
             else if(array[i] < pivotValue){
-                swap(array, lesserVal, i);
-                lesserVal++;
-                i++;
+                swap(array, lesserVal, i); //Move to a lesser value if less than pivot
+                lesserVal++;               //Move array pointer
+                i++;                       //Compare next element later
             }
             else{
                 i++;
@@ -154,7 +152,7 @@ public class QuickSort implements IntSorter{
      * Tukey's ninther method. Finds the median of 3 medians which are taken from different parts
      * of the array. Taken from:
      * https://algs4.cs.princeton.edu/23quicksort/QuickBentleyMcIlroy.java.html
-     * @param array Array which the values come from
+     * @param array Array with int values
      * @param low Lowest index of the subarray
      * @param high Highest index of the subarray
      * @return Index of the median from 9 values in the array
