@@ -1,3 +1,3 @@
 # dnorma-quicksort
 
-Gigachad java
+Gigachad java :trollface:
