@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 public class QuickSort implements IntSorter{
     public void sort(int[] array){
         quickSort(array, 0, array.length - 1);
@@ -12,13 +10,22 @@ public class QuickSort implements IntSorter{
      */
     public static void quickSort(int[]array, int low, int high){
         if(low < high){
-            if(high - low + 1 <= 15){
-                insertionSort(array, low, high); //high - low + 1 is the length of the array
+            if(high - low + 1 <= 12 || array.length > 1000){
+                insertionSort(array, low, high);
                 return;
             }
-            int pivot = hoarePartition(array, low, high);
-            quickSort(array, low, pivot);
-            quickSort(array, pivot + 1, high);
+            // int pivot = hoarePartition(array, low, high);
+            // quickSort(array, low, pivot);
+            // quickSort(array, pivot + 1, high);
+
+            int pivot = tukeysNintherMedian(array, low, high);
+            int[] pivots = bentleyMcIlroyPartition(array, low, high, pivot);
+            int less = pivots[0];
+            int great = pivots[1];
+
+            quickSort(array, low, less - 1);
+            quickSort(array, great + 1, high);
+            
         }
         return;
     }
@@ -31,9 +38,7 @@ public class QuickSort implements IntSorter{
         for(int i = low; i <= high; i++){
             int j = i;
             while(j > 0 && array[j-1] > array[j]){
-                int temp = array[j-1];
-                array[j-1] = array[j];
-                array[j] = temp;
+                swap(array, j-1, j);
                 j--;
             }
         }
@@ -46,8 +51,11 @@ public class QuickSort implements IntSorter{
      * @return
      */
     private static int hoarePartition(int[] array, int low, int high){
-        int pivot = array[(high+low)/2];
-        
+        int pivot = array[low];
+        if(high - low + 1 > 400){
+            pivot = array[tukeysNintherMedian(array, low, high)];
+        }
+                
         //Left index
         int i = low - 1;
 
@@ -66,12 +74,32 @@ public class QuickSort implements IntSorter{
             if(i>=j){ 
                 return j;
             }
-            int temp = array[j];
-            array[j] = array[i];
-            array[i] = temp;
+            swap(array, i, j);
         }
         
     }
+    private static int[] bentleyMcIlroyPartition(int[]array,int low,int high,int pivot){
+        int pivotValue = array[pivot];
+        int lesserVal = low;
+        int greaterVal = high;
+
+        for(int i = low; i <= greaterVal;){
+            if(array[i] > pivotValue){
+                swap(array, greaterVal, i);
+                greaterVal--;
+            }
+            else if(array[i] < pivotValue){
+                swap(array, lesserVal, i);
+                lesserVal++;
+                i++;
+            }
+            else{
+                i++;
+            }
+        }
+        return new int[]{lesserVal, greaterVal};
+    }
+
     private static int tukeysNintherMedian(int[]array, int low, int high){
         int len = high - low + 1;
         int d = len/8; //The array is split in 9 pieces, 8 partitionings is required
@@ -81,16 +109,22 @@ public class QuickSort implements IntSorter{
         return medianIndex3(array, median1, median2, median3); 
     }
     /**
-     * Returns the median of index of three integers. Inspired by https://stackoverflow.com/a/14676309
-     * @param a
-     * @param b
-     * @param c
-     * @return
+     * Returns the median of index of three integers. Taken from
+     * https://github.com/fracpete/princeton-java-algorithms/blob/master/src/main/java/edu/princeton/cs/algorithms/QuickX.java
+     * @param a Integer
+     * @param b Integer
+     * @param c Integer
+     * @return Index of the median of three values in the array
      */
     private static int medianIndex3(int[] v, int a, int b, int c){
-        int max = Math.max(Math.max(v[a],v[b]),v[c]);
-        int min = Math.min(Math.min(v[a],v[b]),v[c]);
-        return v[a]^v[b]^v[c]^v[max]^v[min]; //Integers that share values turn to 0 thanks to XOR
+        return (v[a] < v[b]) ?
+               ((v[b] < v[c]) ? b : (v[a] < v[c] ? c : a)) :
+               ((v[c] < v[b]) ? b : (v[c] < v[a] ? c : a));
     }
-    
+    private static void swap(int[] array, int a, int b){
+        int temp = array[a];
+        array[a] = array[b];
+        array[b] = temp;
+    }
+
 }
